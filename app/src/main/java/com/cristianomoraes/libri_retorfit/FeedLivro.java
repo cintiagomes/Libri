@@ -1,15 +1,18 @@
 package com.cristianomoraes.libri_retorfit;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.cristianomoraes.libri_retorfit.model.Item;
 import com.cristianomoraes.libri_retorfit.model.Livro;
@@ -129,6 +132,47 @@ public class FeedLivro extends AppCompatActivity {
                 txtDescricao = itemView.findViewById(R.id.txtDescricao);
 
                 /** AÇÃO DE CLIQUE PARA EDITAR LIVRO E EXECUTAR LIVRO **/
+                itemView.setOnClickListener(view -> {
+                    /**
+                     setMessage -> Título da caixa de alerta
+                        Parametros:
+                                    1 - Título
+                     setPositiveButton -> Define uma opção de ação
+                        Parametros:
+                                    1 - Título
+                                    2 - Ação a ser executada
+                     setNegativeButton -> Define uma opção de ação
+                        Parametros:
+                                    1 - Título
+                                    2 - Ação a ser executada
+                     * **/
+                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(
+                            FeedLivro.this)
+                            .setMessage("ESCOLHA A AÇÃO QUE DESEJA EXECUTAR")
+                            .setPositiveButton("ALTERAR", (dialog1, witch)->{})
+                            .setNegativeButton("EXCLUIR", (dialog1, witch)->{
+                                routerInterface = APIUtil.getUsuarioInterface();
+
+                                Call<Livro> call = routerInterface.deleteLivro(cod_livro);
+
+                                call.enqueue(new Callback<Livro>() {
+                                    @Override
+                                    public void onResponse(Call<Livro> call, Response<Livro> response) {
+                                        Toast.makeText(FeedLivro.this,
+                                                "LIVRO EXCLUIDO COM SUCESSO!",
+                                                Toast.LENGTH_SHORT).show();
+                                        startActivity(new Intent(FeedLivro.this, FeedLivro.class));
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<Livro> call, Throwable t) {
+
+                                    }
+                                });
+                            });
+
+                    alertDialog.show();
+                });
 
             }//FIM DO CONSTRUTOR DA CLASSE LIVROVIEWHOLDER
 
